@@ -352,7 +352,7 @@ namespace Private {
             const size_t available = cursor.remaining();
 
             // We have an incomplete body, read what we can
-            if (available < size) {
+            if ((available + message->body_.size()) < size) {
                 cursor.advance(available);
                 message->body_.append(token.rawText(), token.size());
 
