@@ -82,6 +82,7 @@ protected:
 
     Header::Collection headers_;
     std::string body_;
+    bool skippedCRLF_ = false;
 
     CookieJar cookies_;
 };

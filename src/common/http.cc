@@ -321,8 +321,9 @@ namespace Private {
 
     State
     BodyStep::apply(StreamCursor& cursor) {
-        if (message->body_.empty()) {
+        if (!message->skippedCRLF_) {
             /* If this is the first time we are reading the body, skip the CRLF */
+            message->skippedCRLF_ = true;
             if (!cursor.advance(2)) return State::Again;
         }
 
