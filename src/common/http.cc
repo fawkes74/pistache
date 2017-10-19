@@ -347,23 +347,15 @@ namespace Private {
     BodyStep::parseContentLength(StreamCursor& cursor, const std::shared_ptr<Header::ContentLength>& cl) {
         auto contentLength = cl->value();
 
-        auto readBody = [&](size_t size) {
+        auto readBody = [&](size_t remaining) {
             StreamCursor::Token token(cursor);
             const size_t available = cursor.remaining();
-
-            // We have an incomplete body, read what we can
-            if ((available + message->body_.size()) < size) {
-                cursor.advance(available);
-                message->body_.append(token.rawText(), token.size());
-
-                bytesRead += available;
-
-                return false;
-            }
+            const size_t size = std::min(available, remaining);
 
             cursor.advance(size);
             message->body_.append(token.rawText(), token.size());
-            return true;
+            bytesRead += size;
+            return remaining - size == 0;
         };
 
         // We already started to read some bytes but we got an incomplete payload
